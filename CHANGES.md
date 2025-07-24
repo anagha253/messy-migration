@@ -62,7 +62,7 @@
 
 - Replaced all `print` statements with `logging` for production readiness.
 - HTTP status codes are now sent along with API responses.
-- Wrapped inputs in `try-except` blocks to handle and validate errors gracefully.
+- Wrapped inputs in `try-except` blocks to handle and validate errors gracefully wherever necessary.
 
 ---
 
@@ -71,5 +71,8 @@
 - Used **ChatGPT** to:
   - Generate unit test cases for the written APIs.
   - Assist in writing developer-facing documentation for the project.
+
+- Used **Github Co-pilot**:
+  - To improve code quality and to find loop-holes in the implementation.
 
 ---

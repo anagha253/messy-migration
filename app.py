@@ -79,16 +79,25 @@ def update_user(user_id):
 
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    cursor.execute("DELETE FROM users WHERE id = ?",(user_id,))
-    conn.commit()
+    try:
+        user = cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        if not user:
+            logging.warning(f"Attempt to delete non-existent user: {user_id}")
+            return jsonify({"message": "User does not exist"}), 404
 
-    check_deleted_user = cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
-    if not check_deleted_user:
-        logging.info(f"user: {user_id} doesnt exists")
-        return jsonify({"message": "User doesnt exists"}), 404
-    
-    logging.info(f"User {user_id} deleted")
-    return jsonify({"message": "User deleted successfully"}), 200
+        cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+        conn.commit()
+
+        logging.info(f"User {user_id} deleted successfully")
+        return jsonify({"message": "User deleted successfully"}), 200
+
+    except sqlite3.Error as e:
+        logging.error(f"Database error while deleting user {user_id}: {e}")
+        return jsonify({"message": "An error occurred while deleting the user"}), 500
+
+    except Exception as e:
+        logging.error(f"Unexpected error while deleting user {user_id}: {e}")
+        return jsonify({"message": "An unexpected error occurred"}), 500
 
 @app.route('/search', methods=['GET'])
 def search_users():
